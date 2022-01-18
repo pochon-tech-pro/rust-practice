@@ -1,6 +1,9 @@
 mod customer;
+mod practice;
 
 fn main() {
+    practice::sample::run();
+
     let input = customer::CustomerRequestDTO {
         id: 1,
         name: String::from("Test"),
