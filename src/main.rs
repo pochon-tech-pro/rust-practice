@@ -11,4 +11,8 @@ fn main() {
 
     let customer = customer::Customer::new(input);
     println!("{:?}", customer);
+    println!("{}", customer.id());
+    println!("{:p}, {}", customer.name(), customer.name());
+    println!("{:p}, {}", customer.mail(), customer.mail());
+    println!("{}", customer.is_active());
 }
