@@ -6,7 +6,7 @@ pub struct CustomerRequestDTO {
     pub is_active: bool,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct Customer {
     id: u32,
     name: String,
