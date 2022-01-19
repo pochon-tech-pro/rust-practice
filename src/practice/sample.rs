@@ -35,7 +35,7 @@ pub fn run() {
         println!("{:?}", customer2);
     }
 
-    // Customersコレクションへ要素追加
+    // HashMapを使ってみる
     let input = customer::CustomerRequestDTO {
         id: 2,
         name: String::from("Test2"),
