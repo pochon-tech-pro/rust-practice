@@ -64,8 +64,20 @@ pub fn run() {
     customer_collection.show();
     customer_collection.remove();
     customer_collection.show();
+
+    // 単純なパターンマッチ
+    let m: u32 = match_sample();
+    match m {
+        100 => println!("100"),
+        1000 | 1001 => println!("1000 or 1001"), // Orパターン
+        _ => print!("none") // その部分に当てはまる具体的な値は重要ではなく、結果の式の中で使用することもない
+    }
 }
 
-fn show_customers (customers: &HashMap<u32, customer::Customer>) {
+fn show_customers(customers: &HashMap<u32, customer::Customer>) {
     println!("{:?}", customers);
+}
+
+fn match_sample() -> u32 {
+    1001
 }
