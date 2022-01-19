@@ -1,1 +1,2 @@
-pub mod sample; // practice配下のサブモジュールを外部に公開
+pub mod sample;
+pub mod customer;
