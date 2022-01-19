@@ -1,5 +1,6 @@
 use std::cell::RefCell;
 use std::collections::HashMap;
+use crate::practice::customer::{Customer, CustomerCollection};
 // super: ここでは、fileが同じディレクトリにいるのでわかりづらいが、lib(main)にぶら下がるpractice。
 // superは予約語で..に相当する。全て読み込みたいのであればワイルドカードを指定する。
 use super::customer;
@@ -50,6 +51,19 @@ pub fn run() {
 
     show_customers(&customers);
     show_customers(&customers);
+
+    // Vector + Collection Objectを体験してみる
+    let mut customer_collection = CustomerCollection::new();
+    let input = customer::CustomerRequestDTO {
+        id: 1001,
+        name: String::from("John Smith"),
+        mail: "John@example.com".to_string(),
+        is_active: true,
+    };
+    customer_collection.add(customer::Customer::new(input));
+    customer_collection.show();
+    customer_collection.remove();
+    customer_collection.show();
 }
 
 fn show_customers (customers: &HashMap<u32, customer::Customer>) {

@@ -35,3 +35,28 @@ impl Customer {
         self.is_active
     }
 }
+
+pub struct CustomerCollection {
+    list: Vec<Customer>,
+}
+
+impl CustomerCollection {
+    pub fn new() -> CustomerCollection {
+        CustomerCollection { list: vec![] }
+    }
+    pub fn show(&self) {
+        println!("{:?}", self.list);
+    }
+    pub fn add(&mut self, value: Customer) {
+        self.list.push(value);
+    }
+    pub fn remove(&mut self) -> Option<Customer> {
+        let result = self.list.pop();
+        match result {
+            Some(value) => {
+                Some(value)
+            },
+            None => None,
+        }
+    }
+}
