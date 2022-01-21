@@ -11,6 +11,14 @@ impl FullName {
             last_name: last_name.to_string(),
         }
     }
+
+    pub fn first_name(&self) -> String {
+        self.first_name.clone()
+    }
+
+    pub fn last_name(&self) -> String {
+        self.last_name.clone()
+    }
 }
 
 
@@ -44,6 +52,15 @@ mod tests {
         let expect = FullName::new("John", "Smith");
         let actual = expect.clone();
         assert!(!std::ptr::eq(&expect, &actual));
+    }
+
+    #[test]
+    fn getter() {
+        let expect = "John".to_string();
+
+        let full_name = FullName::new("John", "Smith");
+        let actual = full_name.first_name();
+        assert_eq!(expect, actual, "Unit Test Failed . : actual = {:?}", actual);
     }
 }
 
