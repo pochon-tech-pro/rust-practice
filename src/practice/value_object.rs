@@ -31,5 +31,12 @@ mod tests {
         let actual = FullName::new("John", "Smith");
         assert_eq!(expect, actual);
     }
+
+    #[test]
+    fn clone() {
+        let expect = FullName { last_name: String::from("Smith"), first_name: String::from("John") };
+        let actual = FullName::new("John", "Smith").clone();
+        assert_eq!(expect, actual);
+    }
 }
 
