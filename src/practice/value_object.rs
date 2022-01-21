@@ -21,6 +21,27 @@ impl FullName {
     }
 }
 
+#[derive(Debug, Clone, PartialEq)]
+pub struct Boy {
+    name: String,
+    age: Option<u16>,
+}
+
+impl Boy {
+    pub fn new(name: &str, age: Option<u16>) -> Boy {
+        Self {
+            name: name.to_string(),
+            age,
+        }
+    }
+
+    pub fn name(&self) -> String {
+        self.name.clone()
+    }
+    pub fn age(&self) -> Option<u16> {
+        self.age
+    }
+}
 
 #[cfg(test)]
 mod tests {
@@ -61,6 +82,25 @@ mod tests {
         let full_name = FullName::new("John", "Smith");
         let actual = full_name.first_name();
         assert_eq!(expect, actual, "Unit Test Failed . : actual = {:?}", actual);
+    }
+
+    #[test]
+    fn option_type() {
+        let boy1 = Boy::new("John", Some(10));
+        assert_eq!(Some(10), boy1.age());
+        let boy2 = Boy::new("John", None);
+        assert_eq!(None, boy2.age());
+        match boy1.age() {
+            Some(age) => println!("Option型の中身を使う: {}", age * age),
+            None => println!("None")
+        }
+        let age = boy1.age().unwrap();
+        println!("unwrapでmatchを省略できる (Noneの時にPanicになるので注意): {}", age);
+        // 引数の型のみ使い、型名を返す関数
+        fn get_typename<T>(_: T) -> String {
+            std::any::type_name::<T>().to_string()
+        }
+        println!("unwrapで取得した値の型名: {}", get_typename(age));
     }
 }
 
