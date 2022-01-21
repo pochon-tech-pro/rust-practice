@@ -1,3 +1,4 @@
+use std::ops::Add;
 use std::str::FromStr;
 use regex::Regex;
 use rust_decimal::Decimal;
@@ -34,8 +35,27 @@ impl FullName {
     }
 }
 
-pub struct Money {
-    amount: Decimal
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct Money {
+    amount: Decimal,
+    currency: String,
+}
+
+impl Money {
+    pub fn new(amount: Decimal, currency: String) -> Money {
+        Money { amount, currency }
+    }
+}
+
+impl Add for Money {
+    type Output = Money;
+
+    fn add(self, other: Self) -> Self::Output {
+        if self.currency != other.currency {
+            panic!("通貨単位が異なります"); // AddTraitがResult型を返せないのでPanic
+        }
+        Money::new((self.amount + other.amount), self.currency)
+    }
 }
 
 #[cfg(test)]
@@ -79,5 +99,14 @@ mod tests {
         let f_1 = 1.1;
         let f_2 = 2.2;
         println!("f64同士の計算のずれ: {:?}", f_1 + f_2);
+    }
+
+    #[test]
+    fn add() {
+        let money_1 = Money{ amount: Decimal::new(100, 0), currency: "JPY".to_string() };
+        let money_2 = Money{ amount: Decimal::new(200, 0), currency: "JPY".to_string() };
+
+        let actual = money_1 + money_2;
+        assert_eq!(Decimal::new(300, 0), actual.amount);
     }
 }
