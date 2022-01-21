@@ -1,5 +1,6 @@
 use std::str::FromStr;
 use regex::Regex;
+use rust_decimal::Decimal;
 
 /**
  * 値オブジェクトで検証する
@@ -33,6 +34,10 @@ impl FullName {
     }
 }
 
+pub struct Money {
+    amount: Decimal
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -64,5 +69,15 @@ mod tests {
         // 未許可の文字はunwrap時にエラーが発生してるので保証されている。
         let full_name = FullName::new(first_name, last_name);
         println!("{:?}", full_name);
+    }
+
+    #[test]
+    fn decimal() {
+        let d_1 = Decimal::from_str("1.1").unwrap();
+        let d_2 = Decimal::from_str("2.2").unwrap();
+        println!("Decimal同士計算: {:?}", d_1 + d_2);
+        let f_1 = 1.1;
+        let f_2 = 2.2;
+        println!("f64同士の計算のずれ: {:?}", f_1 + f_2);
     }
 }
