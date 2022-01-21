@@ -33,10 +33,17 @@ mod tests {
     }
 
     #[test]
-    fn clone() {
+    fn clone_is_equal() {
         let expect = FullName { last_name: String::from("Smith"), first_name: String::from("John") };
         let actual = FullName::new("John", "Smith").clone();
         assert_eq!(expect, actual);
+    }
+
+    #[test]
+    fn clone_address_is_different() {
+        let expect = FullName::new("John", "Smith");
+        let actual = expect.clone();
+        assert!(!std::ptr::eq(&expect, &actual));
     }
 }
 
