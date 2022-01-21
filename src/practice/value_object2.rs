@@ -1,6 +1,11 @@
 use std::str::FromStr;
 use regex::Regex;
 
+/**
+ * 値オブジェクトで検証する
+ * エラーハンドリングは色々検討が必要そう
+ **/
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Name(String);
 
@@ -13,6 +18,18 @@ impl FromStr for Name {
         } else {
             Err("許可されていません")
         }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct FullName {
+    first_name: Name,
+    last_name: Name,
+}
+
+impl FullName {
+    pub fn new(first_name: Name, last_name: Name) -> FullName {
+        FullName { first_name, last_name }
     }
 }
 
@@ -37,5 +54,15 @@ mod tests {
         if let Ok(name) = valid2 {
             println!("成功時のValue値(今回、Resultを参照にしていないので所有権がMoveしてます。): {:?}", name);
         }
+    }
+
+    #[test]
+    fn full_name() {
+        let first_name = "John".parse().unwrap();
+        let last_name = "Smith".parse().unwrap();
+
+        // 未許可の文字はunwrap時にエラーが発生してるので保証されている。
+        let full_name = FullName::new(first_name, last_name);
+        println!("{:?}", full_name);
     }
 }

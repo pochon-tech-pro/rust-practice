@@ -1,3 +1,8 @@
+/**
+ * 値オブジェクトを作ってみる
+ * 属性にOption型を含めてみたりも検証する
+ **/
+
 #[derive(Debug, Clone, PartialEq)]
 pub struct FullName {
     first_name: String,
