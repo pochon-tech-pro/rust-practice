@@ -5,8 +5,8 @@ use regex::Regex;
 use rust_decimal::Decimal;
 
 /**
- * 値オブジェクトで検証する
- * エラーハンドリングは色々検討が必要そう
+ * 値オブジェクトで検証を試してみる
+ * PhantomDataも試してみるやDecimalも試してみる
  **/
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Name(String);
