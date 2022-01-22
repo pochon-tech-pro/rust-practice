@@ -1,3 +1,4 @@
+use std::marker::PhantomData;
 use std::ops::Add;
 use std::str::FromStr;
 use regex::Regex;
@@ -7,7 +8,6 @@ use rust_decimal::Decimal;
  * 値オブジェクトで検証する
  * エラーハンドリングは色々検討が必要そう
  **/
-
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Name(String);
 
@@ -58,6 +58,35 @@ impl Add for Money {
     }
 }
 
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct MoneyOther<T> {
+    amount: Decimal,
+    _currency: PhantomData<T>,
+}
+
+impl<T> MoneyOther<T> {
+    fn new(amount: Decimal) -> Self {
+        Self {
+            amount,
+            _currency: PhantomData::<T>,
+        }
+    }
+}
+
+impl<T> Add for MoneyOther<T> {
+    type Output = MoneyOther<T>;
+
+    fn add(self, other: MoneyOther<T>) -> Self::Output {
+        Self::new(self.amount + other.amount)
+    }
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+enum JPY {}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+enum USD {}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -103,10 +132,21 @@ mod tests {
 
     #[test]
     fn add() {
-        let money_1 = Money{ amount: Decimal::new(100, 0), currency: "JPY".to_string() };
-        let money_2 = Money{ amount: Decimal::new(200, 0), currency: "JPY".to_string() };
+        let money_1 = Money { amount: Decimal::new(100, 0), currency: "JPY".to_string() };
+        let money_2 = Money { amount: Decimal::new(200, 0), currency: "JPY".to_string() };
 
         let actual = money_1 + money_2;
         assert_eq!(Decimal::new(300, 0), actual.amount);
+    }
+
+    #[test]
+    fn add2() {
+        let jpy_1 = MoneyOther::<JPY>::new(Decimal::new(100, 0));
+        let jpy_2 = MoneyOther::<JPY>::new(Decimal::new(200, 0));
+
+        let usd = MoneyOther::<USD>::new(Decimal::new(500, 0));
+
+        let result = jpy_1 + jpy_2;
+        assert_eq!(result, MoneyOther::<JPY>::new(Decimal::new(300, 0)));
     }
 }
