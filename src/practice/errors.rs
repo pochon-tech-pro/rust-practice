@@ -1,6 +1,7 @@
 use std::error::Error;
 use std::fmt::{Display, Formatter};
 use std::fs::File;
+use anyhow::{Context, Result};
 
 #[derive(Debug)]
 enum MyError {
@@ -38,6 +39,33 @@ fn multi_error() -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
+
+#[derive(Debug)]
+enum MyErrorAnyHow {
+    Error3(u64),
+    Error4(String),
+}
+
+impl Display for MyErrorAnyHow {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        use self::MyErrorAnyHow::*;
+        match self {
+            Error3(ui) => write!(f, "Error13: {}", ui),
+            Error4(str) => write!(f, "Error4: {}", str),
+        }
+    }
+}
+
+impl Error for MyErrorAnyHow {}
+
+// ここの戻り値型は、anyhow::Result<()>に変更。この型は、std::result::Result<(), anyhow::Error>のエイリアス
+fn any_how_error() -> Result<()> {
+    let filename = "sample_sample_ohh_sample.txt";
+    let f = File::open(filename).context(format!("failed open {}", { filename }))?;
+    Err(MyErrorAnyHow::Error4("Error!!".to_string()))?;
+    Ok(())
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -55,6 +83,12 @@ mod tests {
     #[test]
     fn error_case2() {
         let result = multi_error();
+        println!("{:?}", result);
+    }
+
+    #[test]
+    fn error_case3() {
+        let result = any_how_error();
         println!("{:?}", result);
     }
 }
