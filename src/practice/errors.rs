@@ -2,6 +2,7 @@ use std::error::Error;
 use std::fmt::{Display, Formatter};
 use std::fs::File;
 use anyhow::{Context, Result};
+use thiserror::Error;
 
 #[derive(Debug)]
 enum MyError {
@@ -66,6 +67,29 @@ fn any_how_error() -> Result<()> {
     Ok(())
 }
 
+// MyErrorAnyHowAndThisErrorに対して、deriveマクロのthiserror::Errorを使う
+#[derive(Debug, Error)]
+enum MyErrorAnyHowAndThisError {
+    // Displayの実装をしてくれる
+    #[error("Error5: {0}")]
+    Error5(u64),
+    #[error("Error6: {0}")]
+    Error6(String),
+    // エラー値は#[error(transparent)]と#[from]を用いることで他のエラー型にDisplay相当の機能を委譲可能
+    #[error(transparent)]
+    Other(#[from] anyhow::Error), // エラーのバリアントを追加
+}
+
+fn any_how_and_this_error() -> Result<()> {
+    let filename = "sample_sample_ohh_sample.txt";
+    let f = File::open(filename).context(format!("failed open {}", { filename }))?;
+    Err(MyErrorAnyHowAndThisError::Error6("Error!!".to_string()))?;
+    Err(MyErrorAnyHowAndThisError::Other(anyhow::anyhow!("Other Error")))?;
+    Ok(())
+}
+
+
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -89,6 +113,12 @@ mod tests {
     #[test]
     fn error_case3() {
         let result = any_how_error();
+        println!("{:?}", result);
+    }
+
+    #[test]
+    fn error_case4() {
+        let result = any_how_and_this_error();
         println!("{:?}", result);
     }
 }
