@@ -1,4 +1,5 @@
 use thiserror::Error;
+use derive_new::new;
 
 #[derive(Error, Debug)]
 pub enum EntityError {
@@ -114,6 +115,16 @@ impl PartialEq for UserOtherIdentity {
     }
 }
 
+// Domainサービス
+#[derive(Debug, new)]
+pub struct UserDomainService {}
+
+impl UserDomainService {
+    pub fn exists(&self, _user: UserOtherIdentity) -> bool {
+        unimplemented!()
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use crate::practice::value_object2::Name;
@@ -142,7 +153,6 @@ mod tests {
         println!("{:?}", user);
     }
 
-
     #[test]
     fn new_3() {
         let before = UserOtherIdentity::new(UserId::new("1000"), UserName::new("山田太郎").unwrap());
@@ -154,5 +164,12 @@ mod tests {
         println!("after:  {:?}", after);
 
         assert_eq!(before, after);
+    }
+
+    #[test]
+    fn domain_service() {
+        let user_domain_service = UserDomainService::new();
+        let user = UserOtherIdentity::new(UserId::new("1000"), UserName::new("山田太郎").unwrap());
+        // println!("bool: {:?}", user_domain_service.exists(user));
     }
 }
