@@ -25,10 +25,19 @@ pub struct User {
 
 impl User {
     pub fn new(name: &str) -> Result<Self, EntityError> {
+        let mut user = Self {
+            name: Default::default()
+        };
+        user.change_name(name)?;
+        return Ok(user);
+    }
+
+    pub fn change_name(&mut self, name: &str) -> Result<(), EntityError> {
         if name.chars().count() < 3 {
             return Err(EntityError::type_error("usernameは3文字以上"));
         }
-        return Ok(Self { name: name.to_string() });
+        self.name = name.to_string();
+        Ok(())
     }
 }
 
@@ -41,8 +50,8 @@ mod tests {
         let user = User::new("B");
         match user {
             // Refをつけることで所有権Moveを回避
-            Ok(ref user) => println!("{:?}", user),
-            Err(ref e) => println!("{:?}", e)
+            Ok(ref user) => println!("Suceessです。 {:?}", user),
+            Err(ref e) => println!("Errorです。 {:?}", e)
         }
         // unwrap_orでError時にPanicを起こさずにDefaultの値を返すようにできる
         println!("{:?}", user.unwrap_or(User { name: "".to_string() }));
