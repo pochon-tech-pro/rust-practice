@@ -18,6 +18,9 @@ impl EntityError {
     }
 }
 
+/**
+ * Primitive版
+ **/
 #[derive(Clone, Debug)]
 pub struct User {
     name: String,
@@ -41,6 +44,43 @@ impl User {
     }
 }
 
+
+/**
+ * VO型活用版
+ **/
+#[derive(Clone, Debug)]
+pub struct UserName(String);
+
+// UserName型のVOを定義
+impl UserName {
+    pub fn new(str: &str) -> Result<Self, EntityError> {
+        if str.chars().count() < 3 {
+            return Err(EntityError::type_error("usernameは3文字以上"));
+        }
+        return Ok(UserName(str.to_string()));
+    }
+}
+
+#[derive(Clone, Debug)]
+pub struct UserOther {
+    name: UserName,
+}
+
+impl UserOther {
+    pub fn new(name: UserName) -> Self {
+        Self { name }
+    }
+
+    // 検証ロジックはVOに委譲
+    pub fn change_name(&mut self, name: UserName) {
+        self.name = name;
+    }
+
+    pub fn name(&self) -> UserName {
+        return self.name.clone();
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -55,5 +95,16 @@ mod tests {
         }
         // unwrap_orでError時にPanicを起こさずにDefaultの値を返すようにできる
         println!("{:?}", user.unwrap_or(User { name: "".to_string() }));
+    }
+
+    #[test]
+    fn new_2() {
+        let username = UserName::new("U");
+        if let Err(ref e) = username {
+            println!("Error Response : {:?}", e);
+            return
+        }
+        let user = UserOther::new(username.unwrap());
+        println!("{:?}", user);
     }
 }
