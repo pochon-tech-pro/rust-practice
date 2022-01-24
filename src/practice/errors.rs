@@ -32,7 +32,12 @@ impl Display for MyError {
 
 impl Error for MyError {}
 
-fn multi_error() -> Result<(), Box<dyn Error>> {
+// SendTraitとSyncTraitを付与することで、他のスレッドに送信しても安全という制約を付与。
+// thread::spawn(|| multi_error())でSendが無いとコンパイルエラーになる。
+// SyncはSendとともに実装される
+// ジェネリクスにトレイト境界を付与する（T: Send + Sync）ときの意味は、T型は何でも良いけど、SendとSyncだけは実装された型じゃないと許可しないという意味
+// 型に対してはライフタイム境界を指定することができ、最後の'staticは、Tに対して'staticライフタイム境界がついている。
+fn multi_error() -> Result<(), Box<dyn Error + Send + Sync + 'static>> {
     // 1つめのError
     // File::open("sample_sample_ohh_sample.txt")?;
     // 2つめのError
@@ -87,8 +92,6 @@ fn any_how_and_this_error() -> Result<()> {
     Err(MyErrorAnyHowAndThisError::Other(anyhow::anyhow!("Other Error")))?;
     Ok(())
 }
-
-
 
 #[cfg(test)]
 mod tests {
