@@ -48,7 +48,7 @@ impl User {
 /**
  * VO型活用版
  **/
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct UserName(String);
 
 // UserName型のVOを定義
@@ -81,8 +81,42 @@ impl UserOther {
     }
 }
 
+/**
+ * 同一性を持たせたEntity
+ */
+#[derive(Debug, PartialEq, Eq, Clone)]
+pub struct UserId(String);
+
+impl UserId {
+    pub fn new(str: &str) -> Self {
+        Self(str.to_string())
+    }
+}
+
+#[derive(Debug, Clone, Eq)] // trait Eqは同値関係の性質を表すLabel？なのでそのままで、PartialEqは独自に実装
+struct UserOtherIdentity {
+    id: UserId,
+    name: UserName,
+}
+
+impl UserOtherIdentity {
+    pub fn new(id: UserId, name: UserName) -> Self {
+        Self { id, name }
+    }
+    pub fn change_name(&mut self, name: UserName) {
+        self.name = name;
+    }
+}
+
+impl PartialEq for UserOtherIdentity {
+    fn eq(&self, other: &Self) -> bool {
+        self.id == other.id
+    }
+}
+
 #[cfg(test)]
 mod tests {
+    use crate::practice::value_object2::Name;
     use super::*;
 
     #[test]
@@ -102,9 +136,23 @@ mod tests {
         let username = UserName::new("U");
         if let Err(ref e) = username {
             println!("Error Response : {:?}", e);
-            return
+            return;
         }
         let user = UserOther::new(username.unwrap());
         println!("{:?}", user);
+    }
+
+
+    #[test]
+    fn new_3() {
+        let before = UserOtherIdentity::new(UserId::new("1000"), UserName::new("山田太郎").unwrap());
+        let mut after = before.clone(); // clone()で参照渡しではなく値を複製してBeforeをMoveさせずに生存させる。
+        println!("before: {:p}", &before);
+        println!("after:  {:p}", &after);
+        after.change_name(UserName::new("マイケル").unwrap());
+        println!("before: {:?}", before);
+        println!("after:  {:?}", after);
+
+        assert_eq!(before, after);
     }
 }
