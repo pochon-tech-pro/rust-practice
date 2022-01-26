@@ -1,5 +1,11 @@
+use std::collections::HashMap;
+use std::sync::{Arc, Mutex};
 use derive_new::new;
+use anyhow::Result;
 
+// -------------------------
+// Domain Model
+// -------------------------
 #[derive(Debug, PartialEq, Eq, Clone, new)]
 struct Id(String);
 
@@ -14,6 +20,13 @@ struct Accounts {
     balance: u16,
 }
 
+// -------------------------
+// Repository (IF)
+// -------------------------
+trait IAccountsRepository {
+    fn save(&self, accounts: Accounts) -> Result<()>; // Resultは処理失敗の可能性考慮
+    fn of(&self, id: Id) -> Result<Option<Accounts>>; // Resultは処理失敗or存在しない可能性考慮
+}
 
 #[cfg(test)]
 mod tests {
