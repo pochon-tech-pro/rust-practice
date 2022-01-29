@@ -30,6 +30,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "cdb031dd78e28731d87d56cc8ffef4a8f36ca26c38fe2de700543e627f8a464a"
 
 [[package]]
+name = "derive-getters"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "16dc4e2517f08ca167440ccb11023c1308ee19a4022d7b03c0e652f971171869"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
 name = "derive-new"
 version = "0.5.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -95,6 +106,7 @@ name = "rust-sample"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "derive-getters",
  "derive-new",
  "regex",
  "rust_decimal",
