@@ -23,6 +23,15 @@ pub struct Accounts {
     balance: u16,
 }
 
+impl Accounts {
+    pub fn withdraw(&mut self, amount: u16) {
+        self.balance = self.balance - amount;
+    }
+    pub fn deposit(&mut self, amount: u16) {
+        self.balance = self.balance + amount;
+    }
+}
+
 // -------------------------
 // Repository (IF)
 // -------------------------
@@ -53,7 +62,22 @@ impl IAccountsRepository for InMemoryAccountsRepository {
         let store = self.store.clone();
         let store = store.lock().unwrap();
         let target = store.get(&id).cloned(); // cloned: Optionの中のAccountsがCloneされる
-        return Ok(target)
+        return Ok(target);
+    }
+}
+
+// -------------------------
+// Domain Service
+// -------------------------
+#[derive(new)]
+pub struct AccountsService {}
+
+impl AccountsService {
+    // ある口座が別の口座へお金を移す業務は口座Eに持たせるのは不自然なため用意
+    pub fn transfer(&self, mut from: Accounts, mut to: Accounts, amount: u16) -> (Accounts, Accounts) {
+        from.withdraw(amount);
+        to.deposit(amount);
+        return (from, to);
     }
 }
 
@@ -78,5 +102,17 @@ mod tests {
         let target = repo.of(id).unwrap().unwrap();
         println!("before {:?}, after {:?}", &accounts, &target);
         assert_eq!(accounts, target);
+    }
+
+    #[test]
+    fn domain_service() {
+        let before_a = Accounts::new(Id::new("1".to_string()), BankName::new("A".to_string()), 1000);
+        let before_b = Accounts::new(Id::new("2".to_string()), BankName::new("B".to_string()), 1000);
+
+        let account_service = AccountsService::new();
+        let (updated_a, updated_b) = account_service.transfer(before_a.clone(), before_b.clone(), 500);
+
+        println!("before {:?}, after {:?}", &before_a, &updated_a);
+        assert_ne!(before_a.balance(), updated_a.balance());
     }
 }
